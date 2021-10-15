@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Pattern.Model.FinanceEntities
 {
-    public class OutCome : FinanceEntities
+    public class Outcome : FinanceEntity
     {
-        public OutCome(int summ, Category category, DateTime dateTime) : base(summ, category, dateTime)
+        public Outcome(int summ, Category category, DateTime dateTime) : base(summ, category, dateTime)
         {
         }
     }

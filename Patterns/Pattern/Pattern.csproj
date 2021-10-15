@@ -56,8 +56,8 @@
     <Compile Include="Model\FinanceEntities\Category\Category.cs" />
     <Compile Include="Model\FinanceEntities\Category\Income.cs" />
     <Compile Include="Model\FinanceEntities\IncomeCategory.cs" />
-    <Compile Include="Model\FinanceEntities\Category\OutCome.cs" />
-    <Compile Include="Model\FinanceEntities\FinanceEntities.cs" />
+    <Compile Include="Model\FinanceEntities\Category\Outcome.cs" />
+    <Compile Include="Model\FinanceEntities\FinanceEntity.cs" />
     <Compile Include="Model\FinanceEntities\OutcomeCategory.cs" />
     <Compile Include="Model\Tools\Loader.cs" />
     <Compile Include="Model\Tools\Saver.cs" />

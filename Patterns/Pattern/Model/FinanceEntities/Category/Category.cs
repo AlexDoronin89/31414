@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pattern.Model.FinanceEntities
 {
-    public class Category
+    public class Category : IReadOnlyCategory
     {
         private static int _id;
 
@@ -28,5 +28,11 @@ namespace Pattern.Model.FinanceEntities
             if (title != "")
                 Title = title;
         }
+    }
+
+    public interface IReadOnlyCategory
+    {
+        int ID { get;}
+        string Title { get; }
     }
 }

@@ -9,160 +9,224 @@ namespace Pattern.Model
 {
     public class FinanceData
     {
-        private List<Income> _inComes;
-        private List<OutCome> _outComes;
+        private List<Income> _incomes;
+        private List<Outcome> _outcomes;
         private List<IncomeCategory> _incomeCategories;
         private List<OutcomeCategory> _outcomeCategories;
 
         public FinanceData()
         {
-            _inComes = new List<Income>();
-            _outComes = new List<OutCome>();
+            _incomes = new List<Income>();
+            _outcomes = new List<Outcome>();
             _incomeCategories = new List<IncomeCategory>();
             _outcomeCategories = new List<OutcomeCategory>();
         }
 
         #region Income CRUD
-        public bool AddIncome(int summ, int categoryId, DateTime dateTime)
+        public bool AddIncome(int sum, int categoryId, DateTime dateTime)
         {
-            Category category = GetCategory(categoryId);
+            Category category = (Category)GetIncomeCategoryById(categoryId);
 
             if (category != null)
-                _inComes.Add(new Income(summ, category, dateTime));
+                _incomes.Add(new Income(sum, category, dateTime));
             else
                 return false;
 
             return true;
         }
 
-        public bool RemoveIncome(int incomeId)
-        {
-            int index = FindIncomeIndexByID(incomeId);
-            if (index != -1)
-            {
-                _inComes.RemoveAt(index);
-                return true;
-            }
-            return false;
-        }
+        public bool RemoveIncome(int id) => RemoveFinanceEntity(id, _incomes);
 
-        public bool UpdateIncome(int incomeID, int summ = -1, int categoryId = -1)
-        {
-            int index = FindIncomeIndexByID(incomeID);
-            if (index != -1)
-            {
-                Category category = categoryId == -1 ? null : GetCategory(categoryId);
-                
-                _inComes[index].Update(summ, category);
-                return true;
-            }
-            return true;
-        }
+        public bool UpdateIncome(int incomeID, int sum = -1, int categoryId = -1) =>
+            UpdateFinanceEntity(incomeID, _incomes, GetIncomeCategoryById, sum, categoryId);
 
-        public Income GetIncomeById(int id)
-        {
-            int index = FindIncomeIndexByID(id);
-            if (index != -1)
-                return _inComes[index];
-            else
-                return null;
-        }
+        public IReadOnlyFinanceEntity GetIncomeById(int id) => GetFinanceEntityById(id, _incomes);
 
-        public IReadOnlyList<Income> GetIncomes()
-        {
-            return _inComes;
-        }
-
-        private int FindIncomeIndexByID(int incomeId)
-        {
-            for (int i = 0; i < _inComes.Count; i++)
-            {
-                if (_inComes[i].ID == incomeId)
-                {
-                }
-            }
-            return -1;
-        }
+        public IReadOnlyList<IReadOnlyFinanceEntity> GetIncomes() => _incomes;
         #endregion
 
         #region Outcome CRUD
-
-        public bool AddOutcome(int summ, int categoryId, DateTime dateTime)
+        public bool AddOutcome(int sum, int categoryId, DateTime dateTime)
         {
-            Category category = GetCategory(categoryId);
+            Category category = (Category)GetIncomeCategoryById(categoryId);
 
             if (category != null)
-                _outComes.Add(new OutCome(summ, category, dateTime));
+                _outcomes.Add(new Outcome(sum, category, dateTime));
             else
                 return false;
 
             return true;
         }
 
-        public bool RemoveOutcome(int outcomeId)
-        {
-            int index = FindOutcomeIndexByID(outcomeId);
-            if (index != -1)
-            {
-                _outComes.RemoveAt(index);
-                return true;
-            }
-            return false;
-        }
+        public bool RemoveOutcome(int id) => RemoveFinanceEntity(id, _outcomes);
 
-        public bool UpdateOutcome(int outcomeID, int summ = -1, int categoryId = -1)
-        {
-            int index = FindOutcomeIndexByID(outcomeID);
-            if (index != -1)
-            {
-                Category category = categoryId == -1 ? null : GetCategory(categoryId);
+        public bool UpdateOutcome(int outcomeID, int sum = -1, int categoryId = -1) =>
+            UpdateFinanceEntity(outcomeID, _outcomes, GetOutcomeCategoryById, sum, categoryId);
 
-                _outComes[index].Update(summ, category);
-                return true;
-            }
+        public IReadOnlyFinanceEntity GetOutcomeById(int id) => GetFinanceEntityById(id, _outcomes);
+
+        public IReadOnlyList<Outcome> GetOutcomes() => _outcomes;
+        #endregion
+
+        #region IncomeCategories CRUD
+        public IReadOnlyCategory GetIncomeCategoryById(int categoryId) => GetCategoryById(categoryId, _incomeCategories);
+
+        public IReadOnlyList<IReadOnlyCategory> GetIncomeCategories() => _incomeCategories;
+
+        public bool AddIncomeCategory(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return false;
+
+            foreach (var item in _incomeCategories)
+                if (title == item.Title)
+                    return false;
+
+            _incomeCategories.Add(new IncomeCategory(title));
             return true;
         }
 
-        public OutCome GetOutcomeById(int id)
+        public bool RemoveIncomeCategory(int id)
         {
-            int index = FindOutcomeIndexByID(id);
+            int index = FindIncomeCategoryById(id);
             if (index != -1)
-                return _outComes[index];
-            else
-                return null;
-        }
-
-        public IReadOnlyList<OutCome> GetOutcomes()
-        {
-            return _outComes;
-        }
-
-        private int FindOutcomeIndexByID(int incomeId)
-        {
-            for (int i = 0; i < _outComes.Count; i++)
             {
-                if (_outComes[i].ID == incomeId)
-                {
-                }
+                _incomeCategories.RemoveAt(index);
+                return true;
             }
+
+            return false;
+        }
+
+        public bool UpdateIncomeCategory(int id, string newTitle)
+        {
+            int index = FindIncomeCategoryById(id);
+            if (index != -1 && string.IsNullOrWhiteSpace(newTitle))
+            {
+                _incomeCategories[index].Update(newTitle);
+                return true;
+            }
+
+            return false;
+        }
+
+        private int FindIncomeCategoryById(int id)
+        {
+            for (int i = 0; i < _incomeCategories.Count; i++)
+                if (id == _incomeCategories[i].ID)
+                    return i;
+
             return -1;
         }
-
         #endregion
 
-        #region IncomeCategory CRUD
-        public Category GetCategory(int categoryTitle)
+        #region OutcomeCategories CRUD
+        public Category GetOutcomeCategoryById(int categoryId) => GetCategoryById(categoryId, _outcomeCategories);
+
+        public bool AddOutcomeCategory(string title)
         {
-            foreach (var category in _incomeCategories)
-                if (category.ID == categoryTitle)
+            if (string.IsNullOrWhiteSpace(title))
+                return false;
+
+            foreach (var item in _outcomeCategories)
+                if (title == item.Title)
+                    return false;
+
+            _outcomeCategories.Add(new OutcomeCategory(title));
+            return true;
+        }
+
+        public bool RemoveOutcomeCategory(int id)
+        {
+            int index = FindOutcomeCategoryById(id);
+            if (index != -1)
+            {
+                _outcomeCategories.RemoveAt(index);
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool UpdateOutcomeCategory(int id, string newTitle)
+        {
+            int index = FindOutcomeCategoryById(id);
+            if (index != -1 && string.IsNullOrWhiteSpace(newTitle))
+            {
+                _outcomeCategories[index].Update(newTitle);
+                return true;
+            }
+
+            return false;
+        }
+
+        private int FindOutcomeCategoryById(int id)
+        {
+            for (int i = 0; i < _outcomeCategories.Count; i++)
+                if (id == _outcomeCategories[i].ID)
+                    return i;
+
+            return -1;
+        }
+        #endregion
+
+
+        #region Private Finance Data Methods
+        private Category GetCategoryById(int categoryId, IEnumerable<Category> categories)
+        {
+            foreach (var category in categories)
+                if (category.ID == categoryId)
                     return category;
 
             return null;
         }
-        #endregion
 
-        #region OutcomeCategory CRUD
+        private bool RemoveFinanceEntity(int id, IEnumerable<FinanceEntity> entities)
+        {
+            int index = FindFinanceEntityIndexById(id, (List<FinanceEntity>)entities);
+            if (index != -1)
+            {
+                ((List<FinanceEntity>)entities).RemoveAt(index);
+                return true;
+            }
+            return false;
+        }
+
+        private bool UpdateFinanceEntity(int incomeID, IEnumerable<FinanceEntity> entities, Func<int, IReadOnlyCategory> getCategory,
+            int sum = -1, int categoryId = -1)
+        {
+            int index = FindFinanceEntityIndexById(incomeID, (List<FinanceEntity>)entities);
+
+            if (index != -1)
+            {
+                Category category = categoryId == -1 ? null : (Category)getCategory(categoryId);
+                ((List<FinanceEntity>)entities)[index].Update(sum, category);
+                return true;
+            }
+
+            return false;
+        }
+
+        private int FindFinanceEntityIndexById(int id, IEnumerable<FinanceEntity> entities)
+        {
+            List<FinanceEntity> entitiesList = (List<FinanceEntity>)entities;
+
+            for (int i = 0; i < entitiesList.Count; i++)
+                if (entitiesList[i].ID == id)
+                    return i;
+
+            return -1;
+        }
+
+        public IReadOnlyFinanceEntity GetFinanceEntityById(int id, IEnumerable<FinanceEntity> entities)
+        {
+            int index = FindFinanceEntityIndexById(id, entities);
+
+            if (index != -1)
+                return ((List<FinanceEntity>)entities)[index];
+            else
+                return null;
+        }
         #endregion
     }
-
 }
